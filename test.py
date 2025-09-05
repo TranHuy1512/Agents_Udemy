@@ -1,3 +1,7 @@
-from openai import AsyncOpenAI
+total = 0
+for i in range(10000):
+    term = (-1) ** i / (2 * i + 1)
+    total += term
 
-client = AsyncOpenAI()
+result = total * 4
+print(result)

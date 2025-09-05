@@ -1,0 +1,11 @@
+Code:
+total = 0
+for i in range(10000):
+    term = (-1)**i / (2*i + 1)
+    total += term
+
+result = total * 4
+print(result)
+
+Output:
+3.1414926535900345
