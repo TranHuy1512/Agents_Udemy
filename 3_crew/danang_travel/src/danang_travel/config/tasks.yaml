@@ -1,0 +1,29 @@
+find_popular_destinations:
+  description: >
+    Find 2-3 popular destinations in the news in {destination} by searching the latest news. Find new destinations that you've not found before.
+  expected_output: >
+    A list of popular destinations in {destination}
+  agent: destination_finder
+  output_file: output/popular_destinations.json
+
+analyze_popular_destinations:
+  description: >
+    Given a list of popular destinations, provide detailed analysis of each destination in a report by searching online
+  expected_output: >
+    A report containing detailed analysis of each destination
+  agent: destination_analyst
+  context:
+    - find_popular_destinations
+  output_file: output/analysis_report.json
+
+pick_best_destinations:
+  description: >
+    Analyze the research findings and pick the best destinations for travel.
+    Send a push notification to the user with the decision and 1 sentence rationale.
+    Then respond with a detailed report on why you chose these destinations, and which destinations were not selected.
+  expected_output: >
+    The chosen destinations and why they were chosen; the destinations that were not selected and why they were not selected.
+  agent: destination_picker
+  context:
+    - analyze_popular_destinations
+  output_file: output/decision.md

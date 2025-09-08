@@ -1,13 +1,15 @@
-```text
 Code:
 total = 0
-for i in range(10000):
-    term = (-1)**i / (2*i + 1)
-    total += term
+num_terms = 10000
+for i in range(num_terms):
+    term = 1 / (2 * i + 1)
+    if i % 2 == 0:
+        total += term
+    else:
+        total -= term
 
-result = total * 4
-print(result)
+final_result = total * 4
+print(final_result)
 
 Output:
 3.1414926535900345
-```
