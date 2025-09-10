@@ -1,7 +1,6 @@
-total = 0
-for i in range(10000):
-    term = (-1) ** i / (2 * i + 1)
-    total += term
+# import os
+# from dotenv import load_dotenv
 
-result = total * 4
-print(result)
+# load_dotenv(override=True)
+
+# print(os.getenv("GOOGLE_API_KEY"))

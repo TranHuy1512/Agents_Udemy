@@ -13,8 +13,13 @@ from sidekick_tools import playwright_tools, other_tools
 import uuid
 import asyncio
 from datetime import datetime
+import os
 
 load_dotenv(override=True)
+BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
+MODEL_NAME = "gemini-2.0-flash"
+# API_KEY = os.getenv("GOOGLE_API_KEY")
+# print(API_KEY)
 
 
 class State(TypedDict):
@@ -27,7 +32,9 @@ class State(TypedDict):
 
 class EvaluatorOutput(BaseModel):
     feedback: str = Field(description="Feedback on the assistant's response")
-    success_criteria_met: bool = Field(description="Whether the success criteria have been met")
+    success_criteria_met: bool = Field(
+        description="Whether the success criteria have been met"
+    )
     user_input_needed: bool = Field(
         description="True if more input is needed from the user, or clarifications, or the assistant is stuck"
     )
@@ -46,17 +53,33 @@ class Sidekick:
         self.playwright = None
 
     async def setup(self):
+        # Get tools
         self.tools, self.browser, self.playwright = await playwright_tools()
         self.tools += await other_tools()
-        worker_llm = ChatOpenAI(model="gpt-4o-mini")
+
+        worker_llm = ChatOpenAI(
+            base_url=BASE_URL,
+            api_key=os.getenv("GOOGLE_API_KEY"),
+            model=MODEL_NAME,
+            temperature=0,
+        )
         self.worker_llm_with_tools = worker_llm.bind_tools(self.tools)
-        evaluator_llm = ChatOpenAI(model="gpt-4o-mini")
-        self.evaluator_llm_with_output = evaluator_llm.with_structured_output(EvaluatorOutput)
+
+        evaluator_llm = ChatOpenAI(
+            base_url=BASE_URL,
+            api_key=os.getenv("GOOGLE_API_KEY"),
+            model=MODEL_NAME,
+            temperature=0,
+        )
+        self.evaluator_llm_with_output = evaluator_llm.with_structured_output(
+            EvaluatorOutput
+        )
         await self.build_graph()
 
     def worker(self, state: State) -> Dict[str, Any]:
         system_message = f"""You are a helpful assistant that can use tools to complete tasks.
     You keep working on a task until either you have a question or clarification for the user, or the success criteria is met.
+    if there is a not infomation about question, you can use the tools to get the information.
     You have many tools to help you, including tools to browse the internet, navigating and retrieving web pages.
     You have a tool to run python code, but note that you would need to include a print() statement if you wanted to receive output.
     The current date and time is {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
@@ -185,7 +208,9 @@ class Sidekick:
         )
         graph_builder.add_edge("tools", "worker")
         graph_builder.add_conditional_edges(
-            "evaluator", self.route_based_on_evaluation, {"worker": "worker", "END": END}
+            "evaluator",
+            self.route_based_on_evaluation,
+            {"worker": "worker", "END": END},
         )
         graph_builder.add_edge(START, "worker")
 
@@ -197,7 +222,8 @@ class Sidekick:
 
         state = {
             "messages": message,
-            "success_criteria": success_criteria or "The answer should be clear and accurate",
+            "success_criteria": success_criteria
+            or "The answer should be clear and accurate",
             "feedback_on_work": None,
             "success_criteria_met": False,
             "user_input_needed": False,
