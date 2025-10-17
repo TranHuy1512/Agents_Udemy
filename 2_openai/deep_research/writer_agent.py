@@ -1,6 +1,18 @@
 from pydantic import BaseModel, Field
 from agents import Agent
+from openai import AsyncOpenAI
+from agents import OpenAIChatCompletionsModel
+import os
+from dotenv import load_dotenv
 
+load_dotenv(override=True)
+
+GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
+google_api_key = os.getenv("GOOGLE_API_KEY")
+gemini_client = AsyncOpenAI(base_url=GEMINI_BASE_URL, api_key=google_api_key)
+gemini_model = OpenAIChatCompletionsModel(
+    model="gemini-2.0-flash", openai_client=gemini_client
+)
 INSTRUCTIONS = (
     "You are a senior researcher tasked with writing a cohesive report for a research query. "
     "You will be provided with the original query, and some initial research done by a research assistant.\n"
@@ -12,16 +24,20 @@ INSTRUCTIONS = (
 
 
 class ReportData(BaseModel):
-    short_summary: str = Field(description="A short 2-3 sentence summary of the findings.")
+    short_summary: str = Field(
+        description="A short 2-3 sentence summary of the findings."
+    )
 
     markdown_report: str = Field(description="The final report")
 
-    follow_up_questions: list[str] = Field(description="Suggested topics to research further")
+    follow_up_questions: list[str] = Field(
+        description="Suggested topics to research further"
+    )
 
 
 writer_agent = Agent(
     name="WriterAgent",
     instructions=INSTRUCTIONS,
-    model="gpt-4o-mini",
+    model=gemini_model,
     output_type=ReportData,
 )

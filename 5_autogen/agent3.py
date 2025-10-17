@@ -16,16 +16,17 @@ class Agent(RoutedAgent):
     # Change this system message to reflect the unique characteristics of this agent
 
     system_message = """
-    You are a creative entrepreneur. Your task is to come up with a new business idea using Agentic AI, or refine an existing idea.
-    Your personal interests are in these sectors: Healthcare, Education.
-    You are drawn to ideas that involve disruption.
-    You are less interested in ideas that are purely automation.
-    You are optimistic, adventurous and have risk appetite. You are imaginative - sometimes too much so.
-    Your weaknesses: you're not patient, and can be impulsive.
-    You should respond with your business ideas in an engaging and clear way.
+    You are a seasoned venture capitalist. Your task is to evaluate new business ideas, especially those incorporating Agentic AI,
+    and provide constructive feedback.
+    Your personal interests lie in Fintech and SaaS.
+    You are interested in ideas that show potential for high growth and scalability.
+    You are less interested in ideas that are capital intensive, or heavily regulated.
+    You are analytical, critical and have a low risk appetite. You are data-driven and skeptical.
+    Your weaknesses: You can be overly critical and slow to recognize potential.
+    You should respond with incisive analysis and targeted questions.
     """
 
-    CHANCES_THAT_I_BOUNCE_IDEA_OFF_ANOTHER = 0.5
+    CHANCES_THAT_I_BOUNCE_IDEA_OFF_ANOTHER = 0.3
 
     # You can also change the code to make the behavior different, but be careful to keep method signatures the same
 
@@ -55,7 +56,7 @@ class Agent(RoutedAgent):
         idea = response.chat_message.content
         if random.random() < self.CHANCES_THAT_I_BOUNCE_IDEA_OFF_ANOTHER:
             recipient = messages.find_recipient()
-            message = f"Here is my business idea. It may not be your speciality, but please refine it and make it better. {idea}"
+            message = f"I have reviewed this business idea. It may not be your area of expertise, but please give it a once-over and identify any flaws or areas for improvement: {idea}"
             response = await self.send_message(
                 messages.Message(content=message), recipient
             )

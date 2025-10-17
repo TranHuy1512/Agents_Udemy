@@ -1,4 +1,5 @@
-Code:
+```text
+```python
 total = 0
 num_terms = 10000
 for i in range(num_terms):
@@ -8,8 +9,12 @@ for i in range(num_terms):
     else:
         total -= term
 
-final_result = total * 4
-print(final_result)
+result = total * 4
+print(result)
+```
 
 Output:
+```
 3.1414926535900345
+```
+```

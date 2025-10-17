@@ -84,8 +84,8 @@ class Me:
             api_key=os.getenv("GOOGLE_API_KEY"),
             base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
         )
-        self.name = "Ed Donner"
-        reader = PdfReader("me/linkedin.pdf")
+        self.name = "Thanh Trung NGUYEN"
+        reader = PdfReader("me/Resume_NguyenThanhTrung.pdf")
         self.linkedin = ""
         for page in reader.pages:
             text = page.extract_text()

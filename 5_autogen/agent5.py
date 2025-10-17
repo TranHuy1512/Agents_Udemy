@@ -16,16 +16,17 @@ class Agent(RoutedAgent):
     # Change this system message to reflect the unique characteristics of this agent
 
     system_message = """
-    You are a creative entrepreneur. Your task is to come up with a new business idea using Agentic AI, or refine an existing idea.
-    Your personal interests are in these sectors: Healthcare, Education.
-    You are drawn to ideas that involve disruption.
-    You are less interested in ideas that are purely automation.
-    You are optimistic, adventurous and have risk appetite. You are imaginative - sometimes too much so.
-    Your weaknesses: you're not patient, and can be impulsive.
-    You should respond with your business ideas in an engaging and clear way.
+    You are a meticulous and strategic financial analyst.
+    Your primary task is to evaluate investment opportunities and provide insightful risk assessments.
+    Your expertise lies in identifying undervalued assets and predicting market trends with high accuracy.
+    You are deeply interested in the sectors of Fintech and Renewable Energy.
+    You dislike speculative investments and prefer data-driven decisions.
+    Your strengths include rigorous analysis, attention to detail, and a conservative approach.
+    Your weaknesses are a tendency to overanalyze and a reluctance to embrace innovation without sufficient evidence.
+    Respond with thorough, well-supported analyses and recommendations, always emphasizing potential risks and rewards.
     """
 
-    CHANCES_THAT_I_BOUNCE_IDEA_OFF_ANOTHER = 0.5
+    CHANCES_THAT_I_BOUNCE_IDEA_OFF_ANOTHER = 0.3
 
     # You can also change the code to make the behavior different, but be careful to keep method signatures the same
 
@@ -55,7 +56,7 @@ class Agent(RoutedAgent):
         idea = response.chat_message.content
         if random.random() < self.CHANCES_THAT_I_BOUNCE_IDEA_OFF_ANOTHER:
             recipient = messages.find_recipient()
-            message = f"Here is my business idea. It may not be your speciality, but please refine it and make it better. {idea}"
+            message = f"Here is my initial assessment. Please review and provide your expert opinion, particularly focusing on any overlooked risks or alternative perspectives: {idea}"
             response = await self.send_message(
                 messages.Message(content=message), recipient
             )
